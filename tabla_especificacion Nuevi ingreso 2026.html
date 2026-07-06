@@ -1,0 +1,927 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+
+    <script>
+    (function() {
+        document.addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+            return false;
+        });
+      
+       document.addEventListener('keydown', function(e) {
+            const key = e.key.toLowerCase();
+            if ((e.ctrlKey && (key === 'u' || key === 's' || key === 'c' || key === 'i' || key === 'j')) ||
+                (e.ctrlKey && e.shiftKey && (key === 'i' || key === 'j' || key === 'c')) ||
+                e.key === 'F12') {
+                e.preventDefault();
+                return false;
+            }
+        });
+        
+        let devtoolsTriggered = false;
+        setInterval(function() {
+            if (devtoolsTriggered) return;
+            const before = new Date();
+            debugger; 
+            const after = new Date();
+            if (after - before > 100) { 
+                devtoolsTriggered = true;
+                document.body.innerHTML = '<div style="text-align:center; padding:50px; font-family:sans-serif;"><h1 style="color:#042C53;">⚠️ Acceso no autorizado</h1><p>El uso de herramientas de desarrollo no está permitido en este recurso institucional.</p><p style="font-size:14px; margin-top:30px;">🔒 COBAED · Dirección Académica</p></div>';
+            }
+        }, 2000);
+        
+        const style = document.createElement('style');
+        style.textContent = `body { user-select: none; -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; }`;
+        document.head.appendChild(style);
+    })();
+    </script>
+
+
+
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tabla de Especificación · COBAED 2026A</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+    <style>
+        :root {
+            --ink: #1a1a2e;
+            --paper: #f5f0e8;
+            --cream: #ede8dc;
+            --gold: #d4a017;
+            --teal: #1a6b6b;
+            --sage: #6b8f71;
+            --accent: #e8420a;
+            --muted: #8a8070;
+            --card-bg: #ffffff;
+            --shadow: 0 4px 24px rgba(26,26,46,0.10);
+        }
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--paper);
+            color: var(--ink);
+            min-height: 100vh;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+
+        header {
+            background: var(--ink);
+            padding: 2.5rem 2rem 2rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        header::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: repeating-linear-gradient(
+                45deg,
+                transparent,
+                transparent 18px,
+                rgba(212,160,23,0.06) 18px,
+                rgba(212,160,23,0.06) 19px
+            );
+        }
+        .header-badge {
+            display: inline-block;
+            font-size: 0.7rem;
+            font-weight: 600;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--gold);
+            border: 1px solid var(--gold);
+            border-radius: 2px;
+            padding: 0.25rem 0.8rem;
+            margin-bottom: 1rem;
+            position: relative;
+        }
+        header h1 {
+            font-family: 'DM Serif Display', serif;
+            font-size: clamp(1.8rem, 4vw, 3rem);
+            color: #fff;
+            line-height: 1.1;
+            position: relative;
+        }
+        header h1 em {
+            color: var(--gold);
+            font-style: italic;
+        }
+        header p {
+            color: rgba(255,255,255,0.55);
+            font-size: 0.9rem;
+            margin-top: 0.6rem;
+            font-weight: 300;
+            position: relative;
+        }
+
+        .stats-bar {
+            background: var(--cream);
+            border-bottom: 2px solid rgba(26,26,46,0.08);
+            display: flex;
+            justify-content: center;
+            gap: 0;
+            flex-wrap: wrap;
+        }
+        .stat-item {
+            padding: 1rem 2rem;
+            text-align: center;
+            border-right: 1px solid rgba(26,26,46,0.1);
+        }
+        .stat-item:last-child { border-right: none; }
+        .stat-num {
+            font-family: 'DM Serif Display', serif;
+            font-size: 1.6rem;
+            color: var(--ink);
+            display: block;
+        }
+        .stat-label {
+            font-size: 0.72rem;
+            font-weight: 500;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--muted);
+        }
+
+        .filter-bar {
+            max-width: 1100px;
+            margin: 2rem auto 0;
+            padding: 0 1.5rem;
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        .filter-label {
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--muted);
+            margin-right: 0.5rem;
+        }
+        .filter-btn {
+            border: 1.5px solid rgba(26,26,46,0.15);
+            background: #fff;
+            color: var(--ink);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.78rem;
+            font-weight: 500;
+            padding: 0.35rem 0.9rem;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .filter-btn:hover, .filter-btn.active {
+            background: var(--ink);
+            color: #fff;
+            border-color: var(--ink);
+        }
+
+        .subjects-grid {
+            max-width: 1100px;
+            margin: 1.5rem auto 4rem;
+            padding: 0 1.5rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.25rem;
+        }
+
+        .subject-card {
+            background: var(--card-bg);
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            border: 1px solid rgba(26,26,46,0.07);
+            transition: transform 0.2s, box-shadow 0.2s;
+            display: flex;
+            flex-direction: column;
+        }
+        .subject-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 32px rgba(26,26,46,0.15);
+        }
+        .card-header {
+            padding: 1.1rem 1.2rem 0.9rem;
+            position: relative;
+        }
+        .area-tag {
+            font-size: 0.62rem;
+            font-weight: 700;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            padding: 0.2rem 0.6rem;
+            border-radius: 3px;
+            display: inline-block;
+            margin-bottom: 0.5rem;
+        }
+        .card-title {
+            font-family: 'DM Serif Display', serif;
+            font-size: 1.1rem;
+            line-height: 1.25;
+            color: var(--ink);
+        }
+        .card-count {
+            font-size: 0.78rem;
+            color: var(--muted);
+            margin-top: 0.3rem;
+            font-weight: 400;
+        }
+
+        .nivel-bars {
+            display: flex;
+            gap: 4px;
+            padding: 0.7rem 1.2rem;
+            background: var(--cream);
+        }
+        .nivel-seg {
+            height: 6px;
+            border-radius: 3px;
+            flex: 1;
+            position: relative;
+            overflow: hidden;
+        }
+        .nivel-seg-fill { height: 100%; border-radius: 3px; }
+        .nivel-label {
+            font-size: 0.63rem;
+            font-weight: 600;
+            letter-spacing: 0.05em;
+            color: var(--muted);
+            text-align: center;
+            margin-top: 3px;
+        }
+        .nivel-wrap { flex: 1; }
+
+        .dist-row {
+            display: flex;
+            gap: 6px;
+            padding: 0.6rem 1.2rem 0.8rem;
+            flex-wrap: wrap;
+        }
+        .dist-pill {
+            font-size: 0.7rem;
+            font-weight: 600;
+            padding: 0.18rem 0.55rem;
+            border-radius: 12px;
+        }
+
+        .card-footer {
+            margin-top: auto;
+            padding: 0.8rem 1.2rem;
+            display: flex;
+            gap: 0.5rem;
+            border-top: 1px solid rgba(26,26,46,0.07);
+        }
+        .btn-detail {
+            flex: 1;
+            padding: 0.55rem 0;
+            border: none;
+            border-radius: 6px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: var(--ink);
+            color: #fff;
+        }
+        .btn-detail:hover { opacity: 0.85; }
+        .btn-pdf {
+            padding: 0.55rem 0.8rem;
+            border: 1.5px solid rgba(26,26,46,0.15);
+            border-radius: 6px;
+            background: transparent;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.78rem;
+            font-weight: 500;
+            cursor: pointer;
+            color: var(--ink);
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .btn-pdf:hover { background: var(--cream); }
+
+        .area-ingles    { background: #e8f4f0; color: #1a6b6b; }
+        .area-ciencias  { background: #fef0e0; color: #b8560a; }
+        .area-humanidades { background: #f0e8f8; color: #6b2fa0; }
+        .area-historia  { background: #e8eef8; color: #2040a0; }
+        .area-lengua    { background: #fce8e8; color: #a02020; }
+        .area-sociales  { background: #e8f8ec; color: #1a7a3a; }
+        .area-matematicas { background: #fffbe0; color: #8a6000; }
+        .area-informatica { background: #e8f0fe; color: #1a40a0; }
+
+        .bar-recordar { background: #4a9eff; }
+        .bar-comprender { background: #22c97a; }
+        .bar-aplicar { background: #ff7043; }
+        .pill-recordar { background: #e8f4ff; color: #1a60cc; }
+        .pill-comprender { background: #e0faf0; color: #0e8050; }
+        .pill-aplicar { background: #fff0ea; color: #c04010; }
+
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(26,26,46,0.65);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+            backdrop-filter: blur(4px);
+        }
+        .modal-overlay.open { display: flex; }
+        .modal {
+            background: #fff;
+            border-radius: 14px;
+            max-width: 860px;
+            width: 100%;
+            max-height: 90vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 24px 80px rgba(26,26,46,0.3);
+            animation: modalIn 0.25s ease;
+        }
+        @keyframes modalIn {
+            from { transform: translateY(30px) scale(0.97); opacity: 0; }
+            to { transform: none; opacity: 1; }
+        }
+        .modal-head {
+            padding: 1.5rem 2rem 1.2rem;
+            border-bottom: 1px solid rgba(26,26,46,0.08);
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+        }
+        .modal-head-info { flex: 1; }
+        .modal-subject-name {
+            font-family: 'DM Serif Display', serif;
+            font-size: 1.5rem;
+            color: var(--ink);
+            line-height: 1.2;
+        }
+        .modal-meta {
+            font-size: 0.8rem;
+            color: var(--muted);
+            margin-top: 0.3rem;
+        }
+        .modal-close {
+            background: var(--cream);
+            border: none;
+            border-radius: 50%;
+            width: 34px;
+            height: 34px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            color: var(--ink);
+            display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0;
+            transition: background 0.2s;
+        }
+        .modal-close:hover { background: #ddd; }
+        .modal-body {
+            overflow-y: auto;
+            padding: 1.5rem 2rem;
+            flex: 1;
+        }
+        .modal-pdf-btn {
+            margin: 0 2rem 1.5rem;
+            padding: 0.65rem 1.2rem;
+            border: 2px solid var(--ink);
+            border-radius: 7px;
+            background: var(--ink);
+            color: #fff;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .modal-pdf-btn:hover { background: #fff; color: var(--ink); }
+
+        .spec-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.82rem;
+        }
+        .spec-table th {
+            background: var(--ink);
+            color: #fff;
+            font-weight: 600;
+            font-size: 0.72rem;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            padding: 0.65rem 0.9rem;
+            text-align: left;
+        }
+        .spec-table td {
+            padding: 0.7rem 0.9rem;
+            border-bottom: 1px solid rgba(26,26,46,0.07);
+            vertical-align: top;
+            line-height: 1.4;
+        }
+        .spec-table tr:hover td { background: var(--cream); }
+        .spec-table tr:nth-child(even) td { background: #fafafa; }
+        .spec-table tr:nth-child(even):hover td { background: var(--cream); }
+        .nivel-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 0.2rem 0.55rem;
+            border-radius: 12px;
+            white-space: nowrap;
+        }
+        .nivel-dot { width: 6px; height: 6px; border-radius: 50%; }
+        .nb-1 { background: #e8f4ff; color: #1a60cc; }
+        .nb-1 .nivel-dot { background: #4a9eff; }
+        .nb-2 { background: #e0faf0; color: #0e8050; }
+        .nb-2 .nivel-dot { background: #22c97a; }
+        .nb-3 { background: #fff0ea; color: #c04010; }
+        .nb-3 .nivel-dot { background: #ff7043; }
+
+        .row-num {
+            font-size: 0.7rem;
+            color: var(--muted);
+            font-weight: 700;
+        }
+
+        .legend {
+            display: flex;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+            padding: 1rem 2rem;
+            border-top: 1px solid rgba(26,26,46,0.07);
+            background: var(--cream);
+        }
+        .legend-item { display: flex; align-items: center; gap: 6px; font-size: 0.75rem; color: var(--muted); }
+        .legend-dot { width: 10px; height: 10px; border-radius: 50%; }
+
+        @media (max-width: 640px) {
+            .subjects-grid { grid-template-columns: 1fr; }
+            .modal-body { padding: 1rem; }
+            .modal-head { padding: 1rem; }
+            .modal-pdf-btn { margin: 0 1rem 1rem; }
+            .legend { padding: 0.75rem 1rem; }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="header-badge">COBAED · Ciclo 2026-2027</div>
+    <h1>Tabla de <em>Especificación</em> </h1>
+    <p> Transición de los alumnos de educación básica a media superior</p> 
+    <p>Distribución de reactivos por materia, contenido y nivel cognitivo (Taxonomía de Bloom)</p>
+</header>
+
+<div class="stats-bar" id="statsBar"></div>
+
+<div class="filter-bar">
+    <span class="filter-label">Área:</span>
+    <button class="filter-btn active" onclick="filterArea('all', this)">Todas</button>
+    <button class="filter-btn" onclick="filterArea('inglés',this)">Inglés</button>
+    <button class="filter-btn" onclick="filterArea('informática',this)">Informática</button>
+    <button class="filter-btn" onclick="filterArea('Humanidades',this)">Humanidades</button>
+    <button class="filter-btn" onclick="filterArea('Lengua y Comunicación',this)">Lengua y Com.</button>
+    <button class="filter-btn" onclick="filterArea('Ciencias Sociales',this)">Ciencias Sociales</button>
+    <button class="filter-btn" onclick="filterArea('MATEMATICAS',this)">Matemáticas</button>
+</div>
+
+<div class="subjects-grid" id="subjectsGrid"></div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modalOverlay" onclick="closeModalOnBg(event)">
+    <div class="modal" id="modalBox">
+        <div class="modal-head">
+            <div class="modal-head-info">
+                <div id="modalAreaTag" class="area-tag" style="margin-bottom:0.4rem"></div>
+                <div class="modal-subject-name" id="modalSubjectName"></div>
+                <div class="modal-meta" id="modalMeta"></div>
+            </div>
+            <button class="modal-close" onclick="closeModal()">✕</button>
+        </div>
+        <div style="padding: 0 2rem 0.5rem;">
+            <button class="modal-pdf-btn" id="modalPdfBtn">
+                ⬇ Descargar PDF
+            </button>
+        </div>
+        <div class="modal-body">
+            <table class="spec-table" id="modalTable">
+                <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Contenido Formativo</th>
+                    <th>Indicador de Nivel Cognitivo</th>
+                    <th>Nivel Cognitivo</th>
+                </tr>
+                </thead>
+                <tbody id="modalTbody"></tbody>
+            </table>
+        </div>
+        <div class="legend">
+            <div class="legend-item"><div class="legend-dot" style="background:#4a9eff"></div> 1 – Recordar</div>
+            <div class="legend-item"><div class="legend-dot" style="background:#22c97a"></div> 2 – Comprender</div>
+            <div class="legend-item"><div class="legend-dot" style="background:#ff7043"></div> 3 – Aplicar</div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // ============================================================
+    // DATOS COMPLETOS  (extraídos de la hoja "FORMATO")
+    // ============================================================
+    const DATA = [
+        // Cultura Digital I / Ciudadanía Digital
+        { materia:"Cultura Digital I · Ciudadanía Digital", area:"informática", contenido:"Partes de la computadora / Operación del entorno virtual y físico", indicador:"Clasifica de una lista las partes principales de la computadora", nivel:2 },
+        { materia:"Cultura Digital I · Ciudadanía Digital", area:"informática", contenido:"Conceptos básicos de la computadora / Operación del entorno virtual y físico", indicador:"Recupera la definición de 'computadora' desde una lectura sencilla", nivel:1 },
+        { materia:"Cultura Digital I · Ciudadanía Digital", area:"informática", contenido:"Hardware / Operación del entorno virtual y físico", indicador:"Reconoce la definición de Hardware", nivel:2 },
+        { materia:"Cultura Digital I · Ciudadanía Digital", area:"informática", contenido:"Hardware / Operación del entorno virtual y físico", indicador:"Clasifica los componentes físicos y lógicos de una computadora", nivel:2 },
+        { materia:"Cultura Digital I · Ciudadanía Digital", area:"informática", contenido:"Software / Operación del entorno virtual y físico", indicador:"Reconoce la definición de Software", nivel:2 },
+        { materia:"Cultura Digital I · Ciudadanía Digital", area:"informática", contenido:"Software / Operación del entorno virtual y físico", indicador:"Clasifica los componentes físicos y lógicos de una computadora", nivel:2 },
+        { materia:"Cultura Digital I · Ciudadanía Digital", area:"informática", contenido:"Sistemas Operativos / Operación del entorno virtual y físico", indicador:"Reconoce la definición de Sistema Operativo", nivel:1 },
+        { materia:"Cultura Digital I · Ciudadanía Digital", area:"informática", contenido:"Procesador de textos / Herramientas de productividad (Ofimática)", indicador:"Reconoce la función principal del procesador de textos: WORD", nivel:1 },
+        { materia:"Cultura Digital I · Ciudadanía Digital", area:"informática", contenido:"Procesador de textos / Herramientas de productividad (Ofimática)", indicador:"Asocia las características mencionadas con el procesador de textos", nivel:2 },
+        { materia:"Cultura Digital I · Ciudadanía Digital", area:"informática", contenido:"Hojas de cálculo / Herramientas de productividad (Ofimática)", indicador:"Asocia las características mencionadas con la hoja de cálculo", nivel:2 },
+        { materia:"Cultura Digital I · Ciudadanía Digital", area:"informática", contenido:"Hojas de cálculo / Herramientas de productividad (Ofimática)", indicador:"Resuelve un caso de presentación de datos y cálculo de información matemática", nivel:3 },
+        { materia:"Cultura Digital I · Ciudadanía Digital", area:"informática", contenido:"Presentaciones Electrónicas", indicador:"Reconoce la función principal del manejador de diapositivas POWER POINT", nivel:1 },
+        { materia:"Cultura Digital I · Ciudadanía Digital", area:"informática", contenido:"Presentaciones Electrónicas", indicador:"Asocia las características mencionadas con el manejador de diapositivas", nivel:2 },
+        { materia:"Cultura Digital I · Ciudadanía Digital", area:"informática", contenido:"Correo electrónico / Redes, comunicación y colaboración", indicador:"Recuerda la definición y características del correo electrónico", nivel:1 },
+        { materia:"Cultura Digital I · Ciudadanía Digital", area:"informática", contenido:"Correo electrónico / Redes, comunicación y colaboración", indicador:"Recuerda la definición y características del correo electrónico", nivel:1 },
+
+        // Lengua y Comunicación I
+        { materia:"Lengua y Comunicación I", area:"Lengua y Comunicación", contenido:"Características generales de los textos literarios", indicador:"Conoce los diferentes tipos de textos literarios, según sus particularidades", nivel:1 },
+        { materia:"Lengua y Comunicación I", area:"Lengua y Comunicación", contenido:"Conectores: causales, comparativos y adición", indicador:"Identifica el uso y aplicación de términos, a través de la lectura", nivel:1 },
+        { materia:"Lengua y Comunicación I", area:"Lengua y Comunicación", contenido:"La escritura como posibilidad de desarrollo del pensamiento humano, la empatía, la creación individual y colectiva", indicador:"Infiere el sentido y seguimiento de la historia, a partir de la información previa", nivel:2 },
+        { materia:"Lengua y Comunicación I", area:"Lengua y Comunicación", contenido:"Introducción a las propiedades del texto: Claridad, Coherencia, Concordancia", indicador:"Diferencia el uso de palabras que aportan sentido al texto", nivel:2 },
+        { materia:"Lengua y Comunicación I", area:"Lengua y Comunicación", contenido:"Información de un texto que lee para resaltar los elementos significativos", indicador:"Identifica la idea principal del párrafo y una idea principal que la respalda", nivel:1 },
+        { materia:"Lengua y Comunicación I", area:"Lengua y Comunicación", contenido:"Apreciación de ideas claras de un texto para poder emitir opiniones al respecto", indicador:"Identifica las características generales de los textos escritos", nivel:1 },
+        { materia:"Lengua y Comunicación I", area:"Lengua y Comunicación", contenido:"Importancia de la concordancia y uso de conectores causales, comparativos y de adición", indicador:"Reconoce el tipo de conectores que otorgan sentido al texto para su comprensión", nivel:2 },
+        { materia:"Lengua y Comunicación I", area:"Lengua y Comunicación", contenido:"Importancia de la concordancia y uso de conectores causales, comparativos y de adición", indicador:"Distingue el uso de los conectores para dar sentido a las ideas transmitidas a través de textos", nivel:1 },
+        { materia:"Lengua y Comunicación I", area:"Lengua y Comunicación", contenido:"Relevancia de la información de un texto que se lee para resaltar los elementos significativos", indicador:"Ubica la idea principal del párrafo y señala una idea que la respalde", nivel:2 },
+        { materia:"Lengua y Comunicación I", area:"Lengua y Comunicación", contenido:"La escritura como posibilidad de desarrollo del pensamiento humano, la empatía, la creación individual y colectiva, la comunicación y la estimulación del avance", indicador:"Clasifica situaciones en las que la escritura se utiliza para comunicar ideas y participar en la vida social", nivel:2 },
+        { materia:"Lengua y Comunicación I", area:"Lengua y Comunicación", contenido:"La lectura como experiencia de placer individual y compartido", indicador:"Reconoce la lectura como un medio para comprender diferentes realidades y desarrollar la empatía", nivel:1 },
+        { materia:"Lengua y Comunicación I", area:"Lengua y Comunicación", contenido:"Diversidad de textos escritos, soportes y formatos", indicador:"Reconoce diferentes tipos de textos escritos de acuerdo con su propósito comunicativo", nivel:1 },
+        { materia:"Lengua y Comunicación I", area:"Lengua y Comunicación", contenido:"Características generales de los textos escritos", indicador:"Relaciona las características de los textos escritos con su propósito comunicativo", nivel:2 },
+        { materia:"Lengua y Comunicación I", area:"Lengua y Comunicación", contenido:"Apreciaciones orales y escritas de los textos", indicador:"Explica su opinión sobre un texto a partir de su contenido", nivel:2 },
+        { materia:"Lengua y Comunicación I", area:"Lengua y Comunicación", contenido:"Seleccionar el contenido", indicador:"Relaciona las etapas de preparación de una exposición oral con las acciones que se realizan en cada una", nivel:2 },
+
+        // Pensamiento Filosófico y Humanidades I
+        { materia:"Pensamiento Filosófico y Humanidades I", area:"Humanidades", contenido:"Naturaleza del pensamiento filosófico / Reflexión ética, dignidad humana, bien común", indicador:"Identifica situaciones cotidianas susceptibles de análisis filosófico", nivel:1 },
+        { materia:"Pensamiento Filosófico y Humanidades I", area:"Humanidades", contenido:"Naturaleza del pensamiento filosófico / Reflexión ética, dignidad humana, bien común", indicador:"Relaciona principios éticos con experiencias personales y comunitarias", nivel:2 },
+        { materia:"Pensamiento Filosófico y Humanidades I", area:"Humanidades", contenido:"Naturaleza del pensamiento filosófico / Reflexión ética, dignidad humana, bien común", indicador:"Selecciona acciones fundamentadas en la reflexión antes de actuar", nivel:3 },
+        { materia:"Pensamiento Filosófico y Humanidades I", area:"Humanidades", contenido:"Preguntas filosóficas / Pensamiento crítico reflexivo, toma de decisiones", indicador:"Distingue preguntas filosóficas de preguntas informativas", nivel:1 },
+        { materia:"Pensamiento Filosófico y Humanidades I", area:"Humanidades", contenido:"Preguntas filosóficas / Pensamiento crítico reflexivo, toma de decisiones", indicador:"Formula preguntas filosóficas sobre problemáticas sociales", nivel:3 },
+        { materia:"Pensamiento Filosófico y Humanidades I", area:"Humanidades", contenido:"Preguntas filosóficas / Pensamiento crítico reflexivo, toma de decisiones", indicador:"Reconoce la pertinencia de preguntas para comprender una problemática", nivel:2 },
+        { materia:"Pensamiento Filosófico y Humanidades I", area:"Humanidades", contenido:"Inclusión y diversidad. Normas, valores y convivencia social / Inclusión educativa y respeto a la diversidad", indicador:"Reconoce acciones que favorecen la inclusión de personas en contextos escolares", nivel:2 },
+        { materia:"Pensamiento Filosófico y Humanidades I", area:"Humanidades", contenido:"Dignidad humana. Valores y principios éticos / Uso responsable de redes sociales. Respeto a la persona", indicador:"Identifica el principio ético vulnerado en una situación cotidiana", nivel:1 },
+        { materia:"Pensamiento Filosófico y Humanidades I", area:"Humanidades", contenido:"Justicia social. Inclusión. Derechos humanos / Educación inclusiva y eliminación de barreras para el aprendizaje", indicador:"Determina acciones institucionales que favorecen una educación inclusiva", nivel:3 },
+        { materia:"Pensamiento Filosófico y Humanidades I", area:"Humanidades", contenido:"Conocimiento, ciencia y verdad / Pensamiento crítico y análisis de información", indicador:"Diferencia conocimiento, opinión y creencia", nivel:1 },
+        { materia:"Pensamiento Filosófico y Humanidades I", area:"Humanidades", contenido:"Conocimiento, ciencia y verdad / Pensamiento crítico y análisis de información", indicador:"Analiza información desde distintos puntos de vista", nivel:3 },
+        { materia:"Pensamiento Filosófico y Humanidades I", area:"Humanidades", contenido:"Conocimiento, ciencia y verdad / Pensamiento crítico y análisis de información", indicador:"Reconoce afirmaciones sustentadas mediante evidencia", nivel:2 },
+        { materia:"Pensamiento Filosófico y Humanidades I", area:"Humanidades", contenido:"Comunidades de diálogo / Participación social, cultura de paz", indicador:"Identifica características del diálogo filosófico", nivel:1 },
+        { materia:"Pensamiento Filosófico y Humanidades I", area:"Humanidades", contenido:"Comunidades de diálogo. Participación colectiva. Argumentación y construcción de acuerdos / Trabajo colaborativo y respeto a distintos puntos de vista", indicador:"Selecciona estrategias para resolver conflictos mediante el diálogo y la colaboración", nivel:3 },
+        { materia:"Pensamiento Filosófico y Humanidades I", area:"Humanidades", contenido:"Cultura de paz. Convivencia. Resolución de conflictos mediante el diálogo / Empatía y respeto en la convivencia escolar", indicador:"Identifica conductas que promueven la empatía y el respeto hacia otras personas", nivel:2 },
+
+        // Inglés (tomando los enunciados de la tabla, se agrupan por materia)
+        { materia:"Inglés", area:"inglés", contenido:"Verbo to be y números cardinales (forma afirmativa)", indicador:"Enunciado en tiempo presente afirmativo en primera persona singular", nivel:2 },
+        { materia:"Inglés", area:"inglés", contenido:"Verbo to be y nacionalidades (forma negativa)", indicador:"Enunciado en tiempo presente negativo en tercera persona singular", nivel:2 },
+        { materia:"Inglés", area:"inglés", contenido:"Presente simple forma afirmativa", indicador:"Enunciado en tiempo presente afirmativo en tercera persona singular", nivel:2 },
+        { materia:"Inglés", area:"inglés", contenido:"Presente simple forma negativa", indicador:"Enunciado en tiempo presente negativo en primera persona singular", nivel:2 },
+        { materia:"Inglés", area:"inglés", contenido:"Presente simple forma afirmativa", indicador:"Enunciado en tiempo presente afirmativo con adjetivo posesivo en tercera persona", nivel:2 },
+        { materia:"Inglés", area:"inglés", contenido:"Adverbios de frecuencia", indicador:"Enunciado en tiempo presente afirmativo con adverbio de frecuencia", nivel:2 },
+        { materia:"Inglés", area:"inglés", contenido:"There is/there are y preposiciones de lugar", indicador:"Enunciado en tiempo presente afirmativo indicando lugar", nivel:2 },
+        { materia:"Inglés", area:"inglés", contenido:"Comparativos", indicador:"Enunciado en comparativo con adjetivo de una sílaba", nivel:2 },
+        { materia:"Inglés", area:"inglés", contenido:"Superlativos", indicador:"Enunciado en comparativo con adjetivo de más de dos sílabas", nivel:2 },
+        { materia:"Inglés", area:"inglés", contenido:"Adverbios de frecuencia", indicador:"Enunciado en tiempo presente afirmativo con adverbio de frecuencia", nivel:2 },
+        { materia:"Inglés", area:"inglés", contenido:"Rutinas cotidianas en tiempo presente", indicador:"Enunciado en tiempo presente afirmativo en primera persona singular", nivel:2 },
+        { materia:"Inglés", area:"inglés", contenido:"Rutinas cotidianas en tiempo presente", indicador:"Enunciado en tiempo presente afirmativo y negativo", nivel:2 },
+        { materia:"Inglés", area:"inglés", contenido:"Adjetivos para personas y cosas", indicador:"Enunciando con adjetivo calificativo para describir a persona y cosas", nivel:2 },
+        { materia:"Inglés", area:"inglés", contenido:"Preposiciones de tiempo", indicador:"Enunciado en tiempo presente con preposiciones de tiempo y actividades cotidianas", nivel:2 },
+        { materia:"Inglés", area:"inglés", contenido:"Pasado simple", indicador:"Enunciado en tiempo pasado afirmativo con verbo irregular", nivel:2 },
+
+        // Pensamiento Matemático 2 (extraído de la hoja)
+        { materia:"Pensamiento Matemático 2", area:"MATEMATICAS", contenido:"Conceptualización de la lógica matemática", indicador:"Reconoce los principios básicos de la lógica matemática, identificando proposiciones, conectivos lógicos y valores de verdad", nivel:1 },
+        { materia:"Pensamiento Matemático 2", area:"MATEMATICAS", contenido:"Concepto de número y números naturales", indicador:"Comprende el concepto de número como herramienta para contar, ordenar y medir, utilizando los números naturales", nivel:1 },
+        { materia:"Pensamiento Matemático 2", area:"MATEMATICAS", contenido:"Clasificación de los números reales", indicador:"Identifica y clasifica los números reales en naturales, enteros, racionales e irracionales", nivel:1 },
+        { materia:"Pensamiento Matemático 2", area:"MATEMATICAS", contenido:"Operaciones aritméticas y sus inversas con números enteros", indicador:"Realiza operaciones de suma, resta, multiplicación y división con números enteros, aplicando sus propiedades", nivel:2 },
+        { materia:"Pensamiento Matemático 2", area:"MATEMATICAS", contenido:"Operaciones aritméticas y sus inversas con números enteros", indicador:"Realiza operaciones de suma, resta, multiplicación y división con números enteros, aplicando sus propiedades", nivel:2 },
+        { materia:"Pensamiento Matemático 2", area:"MATEMATICAS", contenido:"Máximo Común Divisor y mínimo común múltiplo", indicador:"Determina el MCD y el MCM de dos o más números mediante diferentes procedimientos", nivel:2 },
+        { materia:"Pensamiento Matemático 2", area:"MATEMATICAS", contenido:"Máximo Común Divisor y mínimo común múltiplo", indicador:"Determina el MCD y el MCM de dos o más números mediante diferentes procedimientos", nivel:2 },
+        { materia:"Pensamiento Matemático 2", area:"MATEMATICAS", contenido:"Máximo Común Divisor y mínimo común múltiplo", indicador:"Determina el MCD y el MCM de dos o más números mediante diferentes procedimientos, aplicándolos en la solución de problemas", nivel:3 },
+        { materia:"Pensamiento Matemático 2", area:"MATEMATICAS", contenido:"Equivalencia entre fracciones y números enteros", indicador:"Comprende la noción de unidad y representa cantidades mediante números racionales en forma de fracción", nivel:2 },
+        { materia:"Pensamiento Matemático 2", area:"MATEMATICAS", contenido:"Equivalencia entre fracciones y números enteros", indicador:"Comprende la noción de unidad y representa cantidades mediante números racionales en forma de fracción", nivel:2 },
+        { materia:"Pensamiento Matemático 2", area:"MATEMATICAS", contenido:"Proporción y porcentajes", indicador:"Comprende la noción de unidad y representa cantidades mediante números racionales en forma de fracción", nivel:2 },
+        { materia:"Pensamiento Matemático 2", area:"MATEMATICAS", contenido:"Proporción y porcentajes", indicador:"Resuelve expresiones numéricas aplicando correctamente la jerarquía de operaciones", nivel:2 },
+        { materia:"Pensamiento Matemático 2", area:"MATEMATICAS", contenido:"Proporción y porcentajes", indicador:"Resuelve expresiones numéricas aplicando correctamente la jerarquía de operaciones", nivel:3 },
+
+        // Ciencias Sociales (tomando de la hoja)
+        { materia:"Ciencias Sociales", area:"Ciencias Sociales", contenido:"Identifica los procesos productivos que satisfacen las necesidades básicas de la sociedad", indicador:"Identifica los procesos productivos basándose en las necesidades básicas", nivel:1 },
+        { materia:"Ciencias Sociales", area:"Ciencias Sociales", contenido:"Reconoce las aportaciones de los pueblos originarios al patrimonio cultural de nuestro país", indicador:"Reconoce los pueblos originarios del país y su patrimonio", nivel:2 },
+        { materia:"Ciencias Sociales", area:"Ciencias Sociales", contenido:"Identifica los procesos productivos que satisfacen las necesidades básicas de la sociedad", indicador:"Identifica los procesos productivos basándose en las necesidades básicas", nivel:1 },
+        { materia:"Ciencias Sociales", area:"Ciencias Sociales", contenido:"Reconoce las aportaciones de los pueblos originarios al patrimonio cultural de nuestro país", indicador:"Reconoce los pueblos originarios del país y su patrimonio", nivel:2 },
+        { materia:"Ciencias Sociales", area:"Ciencias Sociales", contenido:"Reconoce las aportaciones de los pueblos originarios al patrimonio cultural de nuestro país", indicador:"Reconoce los pueblos originarios del país y su patrimonio", nivel:2 },
+        { materia:"Ciencias Sociales", area:"Ciencias Sociales", contenido:"Discute y reconoce que la diversidad forma parte del espacio democrático", indicador:"Identifica los derechos a la identidad", nivel:2 },
+        { materia:"Ciencias Sociales", area:"Ciencias Sociales", contenido:"Reconoce el devenir del concepto de ciudadanía", indicador:"Comprende lo que es la participación ciudadana", nivel:1 },
+        { materia:"Ciencias Sociales", area:"Ciencias Sociales", contenido:"Discute y reconoce que la diversidad forma parte del espacio democrático", indicador:"Discute y reconoce la inclusión e igualdad", nivel:1 },
+        { materia:"Ciencias Sociales", area:"Ciencias Sociales", contenido:"Comprende y contrasta las normas sociales para su rol en la vida cotidiana", indicador:"Reconoce la importancia de las instituciones, normas y leyes", nivel:1 },
+        { materia:"Ciencias Sociales", area:"Ciencias Sociales", contenido:"Comprende y contrasta las normas sociales para su rol en la vida cotidiana", indicador:"Reconoce la importancia de las instituciones, normas y leyes", nivel:1 },
+        { materia:"Ciencias Sociales", area:"Ciencias Sociales", contenido:"Reconoce el devenir del concepto de ciudadanía y Estado", indicador:"Identifica el concepto de Estado y su organización", nivel:1 },
+        { materia:"Ciencias Sociales", area:"Ciencias Sociales", contenido:"Construcción social de roles en diversos ámbitos para así construir una adecuada ciudadanía", indicador:"Identifica los procesos productivos basándose en las necesidades básicas", nivel:1 },
+        { materia:"Ciencias Sociales", area:"Ciencias Sociales", contenido:"Comprende y contrasta las normas sociales para su rol en la vida cotidiana", indicador:"Reconoce la importancia de las instituciones, normas y leyes", nivel:1 },
+        { materia:"Ciencias Sociales", area:"Ciencias Sociales", contenido:"Comprende y contrasta las normas sociales para su rol en la vida cotidiana", indicador:"Reconoce la importancia de las instituciones, normas y leyes", nivel:1 },
+        { materia:"Ciencias Sociales", area:"Ciencias Sociales", contenido:"Comprende y contrasta las normas sociales para su rol en la vida cotidiana", indicador:"Identifica el impacto ambiental de los procesos productivos", nivel:1 }
+    ];
+
+    // ============================================================
+    // HELPERS
+    // ============================================================
+    const NIVEL_LABEL = { 1:"Recordar", 2:"Comprender", 3:"Aplicar" };
+
+    const AREA_CSS = {
+        "inglés": "area-ingles",
+        "informática": "area-informatica",
+        "Humanidades": "area-humanidades",
+        "Lengua y Comunicación": "area-lengua",
+        "Ciencias Sociales": "area-sociales",
+        "MATEMATICAS": "area-matematicas"
+    };
+
+    function getAreaCss(area) {
+        return AREA_CSS[area] || "area-ingles";
+    }
+
+    function getAreaLabel(area) {
+        const map = {
+            "inglés":"Inglés",
+            "informática":"Informática",
+            "Humanidades":"Humanidades",
+            "Lengua y Comunicación":"Lengua y Com.",
+            "Ciencias Sociales":"Ciencias Sociales",
+            "MATEMATICAS":"Matemáticas"
+        };
+        return map[area] || area;
+    }
+
+    // Group by materia
+    function groupByMateria(rows) {
+        const map = {};
+        for (const r of rows) {
+            if (!map[r.materia]) map[r.materia] = { materia: r.materia, area: r.area, rows: [] };
+            map[r.materia].rows.push(r);
+        }
+        return Object.values(map);
+    }
+
+    const subjects = groupByMateria(DATA);
+
+    // ============================================================
+    // STATS
+    // ============================================================
+    function buildStats() {
+        const total = DATA.length;
+        const materias = subjects.length;
+        const n1 = DATA.filter(r=>r.nivel===1).length;
+        const n2 = DATA.filter(r=>r.nivel===2).length;
+        const n3 = DATA.filter(r=>r.nivel===3).length;
+        document.getElementById('statsBar').innerHTML = `
+            <div class="stat-item"><span class="stat-num">${materias}</span><span class="stat-label">Materias</span></div>
+            <div class="stat-item"><span class="stat-num">${total}</span><span class="stat-label">Reactivos totales</span></div>
+            <div class="stat-item"><span class="stat-num" style="color:#4a9eff">${n1}</span><span class="stat-label">Nivel 1 · Recordar</span></div>
+            <div class="stat-item"><span class="stat-num" style="color:#22c97a">${n2}</span><span class="stat-label">Nivel 2 · Comprender</span></div>
+            <div class="stat-item"><span class="stat-num" style="color:#ff7043">${n3}</span><span class="stat-label">Nivel 3 · Aplicar</span></div>
+        `;
+    }
+
+    // ============================================================
+    // CARDS
+    // ============================================================
+    let activeFilter = 'all';
+
+    function filterArea(area, el) {
+        activeFilter = area;
+        document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+        if (el) el.classList.add('active');
+        renderCards();
+    }
+
+    function renderCards() {
+        const grid = document.getElementById('subjectsGrid');
+        const filtered = activeFilter === 'all' ? subjects : subjects.filter(s => s.area === activeFilter);
+        grid.innerHTML = filtered.map(s => cardHTML(s)).join('');
+    }
+
+    function cardHTML(s) {
+        const rows = s.rows;
+        const n1 = rows.filter(r=>r.nivel===1).length;
+        const n2 = rows.filter(r=>r.nivel===2).length;
+        const n3 = rows.filter(r=>r.nivel===3).length;
+        const total = rows.length;
+        const areaCss = getAreaCss(s.area);
+        const areaLabel = getAreaLabel(s.area);
+
+        const p1 = total ? Math.round(n1/total*100) : 0;
+        const p2 = total ? Math.round(n2/total*100) : 0;
+        const p3 = total ? Math.round(n3/total*100) : 0;
+
+        const safeId = s.materia.replace(/[^a-zA-Z0-9]/g,'_');
+
+        return `
+            <div class="subject-card" id="card_${safeId}">
+                <div class="card-header">
+                    <div class="area-tag ${areaCss}">${areaLabel}</div>
+                    <div class="card-title">${s.materia}</div>
+                    <div class="card-count">${total} reactivos registrados</div>
+                </div>
+                <div class="nivel-bars">
+                    ${[{l:'Recordar',p:p1,cls:'bar-recordar'},{l:'Comprender',p:p2,cls:'bar-comprender'},{l:'Aplicar',p:p3,cls:'bar-aplicar'}].map(b=>`
+                        <div class="nivel-wrap">
+                            <div class="nivel-seg"><div class="nivel-seg-fill ${b.cls}" style="width:${b.p}%"></div></div>
+                            <div class="nivel-label">${b.p}%</div>
+                        </div>
+                    `).join('')}
+                </div>
+                <div class="dist-row">
+                    ${n1?`<span class="dist-pill pill-recordar">N1: ${n1}</span>`:''}
+                    ${n2?`<span class="dist-pill pill-comprender">N2: ${n2}</span>`:''}
+                    ${n3?`<span class="dist-pill pill-aplicar">N3: ${n3}</span>`:''}
+                </div>
+                <div class="card-footer">
+                    <button class="btn-detail" onclick="openModal('${s.materia.replace(/'/g,"\\'")}')">Ver ${total} registros</button>
+                    <button class="btn-pdf" onclick="downloadPDF('${s.materia.replace(/'/g,"\\'")}')">⬇ PDF</button>
+                </div>
+            </div>`;
+    }
+
+    // ============================================================
+    // MODAL
+    // ============================================================
+    function openModal(materia) {
+        const s = subjects.find(x=>x.materia===materia);
+        if(!s) return;
+        document.getElementById('modalAreaTag').textContent = getAreaLabel(s.area);
+        document.getElementById('modalAreaTag').className = `area-tag ${getAreaCss(s.area)}`;
+        document.getElementById('modalSubjectName').textContent = s.materia;
+        document.getElementById('modalMeta').textContent = `${s.rows.length} reactivos · Área: ${s.area}`;
+
+        const tbody = document.getElementById('modalTbody');
+        tbody.innerHTML = s.rows.map((r,i)=>`
+                <tr>
+                    <td class="row-num">${i+1}</td>
+                    <td>${r.contenido}</td>
+                    <td>${r.indicador}</td>
+                    <td><span class="nivel-badge nb-${r.nivel}"><span class="nivel-dot"></span>${r.nivel} – ${NIVEL_LABEL[r.nivel]}</span></td>
+                </tr>
+            `).join('');
+
+        document.getElementById('modalPdfBtn').onclick = () => downloadPDF(materia);
+        document.getElementById('modalOverlay').classList.add('open');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeModal() {
+        document.getElementById('modalOverlay').classList.remove('open');
+        document.body.style.overflow = '';
+    }
+
+    function closeModalOnBg(e) {
+        if(e.target === document.getElementById('modalOverlay')) closeModal();
+    }
+
+    document.addEventListener('keydown', e => { if(e.key==='Escape') closeModal(); });
+
+    // ============================================================
+    // PDF DOWNLOAD
+    // ============================================================
+    function downloadPDF(materia) {
+        const { jsPDF } = window.jspdf;
+        const s = subjects.find(x=>x.materia===materia);
+        if(!s) return;
+
+        const doc = new jsPDF({ orientation:'portrait', unit:'mm', format:'a4' });
+        const W = doc.internal.pageSize.getWidth();
+
+        doc.setFillColor(26,26,46);
+        doc.rect(0,0,W,40,'F');
+
+        doc.setFontSize(7);
+        doc.setTextColor(212,160,23);
+        doc.text('COBAED · Tabla de Especificación · Ciclo 2026A', 14, 12);
+
+        doc.setFontSize(15);
+        doc.setTextColor(255,255,255);
+        doc.setFont('helvetica','bold');
+        const lines = doc.splitTextToSize(s.materia, W-28);
+        doc.text(lines, 14, 22);
+
+        doc.setFontSize(8);
+        doc.setTextColor(180,180,180);
+        doc.setFont('helvetica','normal');
+        doc.text(`Área: ${s.area}   ·   ${s.rows.length} reactivos`, 14, 38);
+
+        const n1=s.rows.filter(r=>r.nivel===1).length;
+        const n2=s.rows.filter(r=>r.nivel===2).length;
+        const n3=s.rows.filter(r=>r.nivel===3).length;
+
+        doc.setFillColor(245,240,232);
+        doc.rect(0,40,W,14,'F');
+        doc.setFontSize(8);
+        [[`N1 · Recordar: ${n1}`,14,49],[`N2 · Comprender: ${n2}`,75,49],[`N3 · Aplicar: ${n3}`,145,49]].forEach(([txt,x,y])=>{
+            doc.setTextColor(26,26,46);
+            doc.setFont('helvetica','bold');
+            doc.text(txt, x, y);
+        });
+
+        doc.autoTable({
+            startY: 58,
+            head: [['#','Contenido Formativo','Indicador de Nivel Cognitivo','Nivel Cognitivo']],
+            body: s.rows.map((r,i)=>[
+                i+1,
+                r.contenido,
+                r.indicador,
+                `${r.nivel} – ${NIVEL_LABEL[r.nivel]}`
+            ]),
+            styles: { fontSize:7.5, cellPadding:3, lineColor:[220,215,205], lineWidth:0.3 },
+            headStyles: { fillColor:[26,26,46], textColor:255, fontStyle:'bold', fontSize:7 },
+            alternateRowStyles: { fillColor:[248,245,240] },
+            columnStyles: {
+                0: { cellWidth:9, halign:'center', textColor:[120,115,110] },
+                3: { cellWidth:30, halign:'center' }
+            },
+            didDrawCell(data) {
+                if(data.section==='body' && data.column.index===3) {
+                    const val = s.rows[data.row.index]?.nivel;
+                    const colors = { 1:[74,158,255], 2:[34,201,122], 3:[255,112,67] };
+                    const c = colors[val] || [120,120,120];
+                    doc.setDrawColor(...c);
+                    doc.setLineWidth(0.8);
+                    doc.line(data.cell.x, data.cell.y+1, data.cell.x, data.cell.y+data.cell.height-1);
+                    doc.setLineWidth(0.3);
+                }
+            },
+            margin:{left:10,right:10}
+        });
+
+        const pCount = doc.internal.getNumberOfPages();
+        for(let i=1;i<=pCount;i++){
+            doc.setPage(i);
+            doc.setFontSize(7);
+            doc.setTextColor(160,155,145);
+            doc.text(`COBAED · ${s.materia}`, 10, doc.internal.pageSize.getHeight()-7);
+            doc.text(`Pág. ${i} / ${pCount}`, W-25, doc.internal.pageSize.getHeight()-7);
+        }
+
+        const filename = s.materia.replace(/[^a-zA-Z0-9áéíóúÁÉÍÓÚñÑ ]/g,'').replace(/\s+/g,'_').substring(0,40);
+        doc.save(`TE_${filename}.pdf`);
+    }
+
+    // ============================================================
+    // INIT
+    // ============================================================
+    buildStats();
+    renderCards();
+
+    // Prevenir clic derecho y atajos (según requerimiento)
+    document.addEventListener('contextmenu', function(e) {
+        e.preventDefault();
+        return false;
+    });
+
+    document.addEventListener('keydown', function(e) {
+        const key = e.key.toLowerCase();
+        if ((e.ctrlKey && (key === 'u' || key === 's' || key === 'c' || key === 'i' || key === 'j')) ||
+            (e.ctrlKey && e.shiftKey && (key === 'i' || key === 'j' || key === 'c')) ||
+            e.key === 'F12') {
+            e.preventDefault();
+            return false;
+        }
+    });
+
+    // Detectar DevTools (simplificado)
+    let devtoolsTriggered = false;
+    setInterval(function() {
+        if (devtoolsTriggered) return;
+        const before = new Date();
+        debugger;
+        const after = new Date();
+        if (after - before > 100) {
+            devtoolsTriggered = true;
+            document.body.innerHTML = '<div style="text-align:center; padding:50px; font-family:sans-serif;"><h1 style="color:#042C53;">⚠️ Acceso no autorizado</h1><p>El uso de herramientas de desarrollo no está permitido en este recurso institucional.</p><p style="font-size:14px; margin-top:30px;">🔒 COBAED · Dirección Académica</p></div>';
+        }
+    }, 2000);
+</script>
+</body>
+</html>
