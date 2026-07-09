@@ -1,45 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-
-    <script>
-    (function() {
-        document.addEventListener('contextmenu', function(e) {
-            e.preventDefault();
-            return false;
-        });
-      
-       document.addEventListener('keydown', function(e) {
-            const key = e.key.toLowerCase();
-            if ((e.ctrlKey && (key === 'u' || key === 's' || key === 'c' || key === 'i' || key === 'j')) ||
-                (e.ctrlKey && e.shiftKey && (key === 'i' || key === 'j' || key === 'c')) ||
-                e.key === 'F12') {
-                e.preventDefault();
-                return false;
-            }
-        });
-        
-        let devtoolsTriggered = false;
-        setInterval(function() {
-            if (devtoolsTriggered) return;
-            const before = new Date();
-            debugger; 
-            const after = new Date();
-            if (after - before > 100) { 
-                devtoolsTriggered = true;
-                document.body.innerHTML = '<div style="text-align:center; padding:50px; font-family:sans-serif;"><h1 style="color:#042C53;">⚠️ Acceso no autorizado</h1><p>El uso de herramientas de desarrollo no está permitido en este recurso institucional.</p><p style="font-size:14px; margin-top:30px;">🔒 COBAED · Dirección Académica</p></div>';
-            }
-        }, 2000);
-        
-        const style = document.createElement('style');
-        style.textContent = `body { user-select: none; -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; }`;
-        document.head.appendChild(style);
-    })();
-    </script>
-
-
-
-
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tabla de Especificación · COBAED 2026A</title>
@@ -482,9 +443,8 @@
 <body>
 
 <header>
-    <div class="header-badge">COBAED · Ciclo 2026-2027</div>
-    <h1>Tabla de <em>Especificación</em> </h1>
-    <p> Transición de los alumnos de educación básica a media superior</p> 
+    <div class="header-badge"> NUEVO INGRESO A - COBAED - SEMESTRE 2026A</div>
+    <h1>Tabla de <em>Especificación</em></h1>
     <p>Distribución de reactivos por materia, contenido y nivel cognitivo (Taxonomía de Bloom)</p>
 </header>
 
@@ -499,6 +459,7 @@
     <button class="filter-btn" onclick="filterArea('Lengua y Comunicación',this)">Lengua y Com.</button>
     <button class="filter-btn" onclick="filterArea('Ciencias Sociales',this)">Ciencias Sociales</button>
     <button class="filter-btn" onclick="filterArea('MATEMATICAS',this)">Matemáticas</button>
+    <button class="filter-btn" onclick="filterArea('CIENCIAS NATURALES',this)">Ciencias Naturales</button>
 </div>
 
 <div class="subjects-grid" id="subjectsGrid"></div>
@@ -542,10 +503,10 @@
 
 <script>
     // ============================================================
-    // DATOS COMPLETOS  (extraídos de la hoja "FORMATO")
+    // DATOS COMPLETOS (fusionando las dos tablas)
     // ============================================================
     const DATA = [
-        // Cultura Digital I / Ciudadanía Digital
+        // ---- Cultura Digital I ----
         { materia:"Cultura Digital I · Ciudadanía Digital", area:"informática", contenido:"Partes de la computadora / Operación del entorno virtual y físico", indicador:"Clasifica de una lista las partes principales de la computadora", nivel:2 },
         { materia:"Cultura Digital I · Ciudadanía Digital", area:"informática", contenido:"Conceptos básicos de la computadora / Operación del entorno virtual y físico", indicador:"Recupera la definición de 'computadora' desde una lectura sencilla", nivel:1 },
         { materia:"Cultura Digital I · Ciudadanía Digital", area:"informática", contenido:"Hardware / Operación del entorno virtual y físico", indicador:"Reconoce la definición de Hardware", nivel:2 },
@@ -562,7 +523,7 @@
         { materia:"Cultura Digital I · Ciudadanía Digital", area:"informática", contenido:"Correo electrónico / Redes, comunicación y colaboración", indicador:"Recuerda la definición y características del correo electrónico", nivel:1 },
         { materia:"Cultura Digital I · Ciudadanía Digital", area:"informática", contenido:"Correo electrónico / Redes, comunicación y colaboración", indicador:"Recuerda la definición y características del correo electrónico", nivel:1 },
 
-        // Lengua y Comunicación I
+        // ---- Lengua y Comunicación I ----
         { materia:"Lengua y Comunicación I", area:"Lengua y Comunicación", contenido:"Características generales de los textos literarios", indicador:"Conoce los diferentes tipos de textos literarios, según sus particularidades", nivel:1 },
         { materia:"Lengua y Comunicación I", area:"Lengua y Comunicación", contenido:"Conectores: causales, comparativos y adición", indicador:"Identifica el uso y aplicación de términos, a través de la lectura", nivel:1 },
         { materia:"Lengua y Comunicación I", area:"Lengua y Comunicación", contenido:"La escritura como posibilidad de desarrollo del pensamiento humano, la empatía, la creación individual y colectiva", indicador:"Infiere el sentido y seguimiento de la historia, a partir de la información previa", nivel:2 },
@@ -579,7 +540,7 @@
         { materia:"Lengua y Comunicación I", area:"Lengua y Comunicación", contenido:"Apreciaciones orales y escritas de los textos", indicador:"Explica su opinión sobre un texto a partir de su contenido", nivel:2 },
         { materia:"Lengua y Comunicación I", area:"Lengua y Comunicación", contenido:"Seleccionar el contenido", indicador:"Relaciona las etapas de preparación de una exposición oral con las acciones que se realizan en cada una", nivel:2 },
 
-        // Pensamiento Filosófico y Humanidades I
+        // ---- Pensamiento Filosófico y Humanidades I ----
         { materia:"Pensamiento Filosófico y Humanidades I", area:"Humanidades", contenido:"Naturaleza del pensamiento filosófico / Reflexión ética, dignidad humana, bien común", indicador:"Identifica situaciones cotidianas susceptibles de análisis filosófico", nivel:1 },
         { materia:"Pensamiento Filosófico y Humanidades I", area:"Humanidades", contenido:"Naturaleza del pensamiento filosófico / Reflexión ética, dignidad humana, bien común", indicador:"Relaciona principios éticos con experiencias personales y comunitarias", nivel:2 },
         { materia:"Pensamiento Filosófico y Humanidades I", area:"Humanidades", contenido:"Naturaleza del pensamiento filosófico / Reflexión ética, dignidad humana, bien común", indicador:"Selecciona acciones fundamentadas en la reflexión antes de actuar", nivel:3 },
@@ -596,7 +557,7 @@
         { materia:"Pensamiento Filosófico y Humanidades I", area:"Humanidades", contenido:"Comunidades de diálogo. Participación colectiva. Argumentación y construcción de acuerdos / Trabajo colaborativo y respeto a distintos puntos de vista", indicador:"Selecciona estrategias para resolver conflictos mediante el diálogo y la colaboración", nivel:3 },
         { materia:"Pensamiento Filosófico y Humanidades I", area:"Humanidades", contenido:"Cultura de paz. Convivencia. Resolución de conflictos mediante el diálogo / Empatía y respeto en la convivencia escolar", indicador:"Identifica conductas que promueven la empatía y el respeto hacia otras personas", nivel:2 },
 
-        // Inglés (tomando los enunciados de la tabla, se agrupan por materia)
+        // ---- Inglés ----
         { materia:"Inglés", area:"inglés", contenido:"Verbo to be y números cardinales (forma afirmativa)", indicador:"Enunciado en tiempo presente afirmativo en primera persona singular", nivel:2 },
         { materia:"Inglés", area:"inglés", contenido:"Verbo to be y nacionalidades (forma negativa)", indicador:"Enunciado en tiempo presente negativo en tercera persona singular", nivel:2 },
         { materia:"Inglés", area:"inglés", contenido:"Presente simple forma afirmativa", indicador:"Enunciado en tiempo presente afirmativo en tercera persona singular", nivel:2 },
@@ -613,7 +574,7 @@
         { materia:"Inglés", area:"inglés", contenido:"Preposiciones de tiempo", indicador:"Enunciado en tiempo presente con preposiciones de tiempo y actividades cotidianas", nivel:2 },
         { materia:"Inglés", area:"inglés", contenido:"Pasado simple", indicador:"Enunciado en tiempo pasado afirmativo con verbo irregular", nivel:2 },
 
-        // Pensamiento Matemático 2 (extraído de la hoja)
+        // ---- Pensamiento Matemático 2 ----
         { materia:"Pensamiento Matemático 2", area:"MATEMATICAS", contenido:"Conceptualización de la lógica matemática", indicador:"Reconoce los principios básicos de la lógica matemática, identificando proposiciones, conectivos lógicos y valores de verdad", nivel:1 },
         { materia:"Pensamiento Matemático 2", area:"MATEMATICAS", contenido:"Concepto de número y números naturales", indicador:"Comprende el concepto de número como herramienta para contar, ordenar y medir, utilizando los números naturales", nivel:1 },
         { materia:"Pensamiento Matemático 2", area:"MATEMATICAS", contenido:"Clasificación de los números reales", indicador:"Identifica y clasifica los números reales en naturales, enteros, racionales e irracionales", nivel:1 },
@@ -628,7 +589,7 @@
         { materia:"Pensamiento Matemático 2", area:"MATEMATICAS", contenido:"Proporción y porcentajes", indicador:"Resuelve expresiones numéricas aplicando correctamente la jerarquía de operaciones", nivel:2 },
         { materia:"Pensamiento Matemático 2", area:"MATEMATICAS", contenido:"Proporción y porcentajes", indicador:"Resuelve expresiones numéricas aplicando correctamente la jerarquía de operaciones", nivel:3 },
 
-        // Ciencias Sociales (tomando de la hoja)
+        // ---- Ciencias Sociales ----
         { materia:"Ciencias Sociales", area:"Ciencias Sociales", contenido:"Identifica los procesos productivos que satisfacen las necesidades básicas de la sociedad", indicador:"Identifica los procesos productivos basándose en las necesidades básicas", nivel:1 },
         { materia:"Ciencias Sociales", area:"Ciencias Sociales", contenido:"Reconoce las aportaciones de los pueblos originarios al patrimonio cultural de nuestro país", indicador:"Reconoce los pueblos originarios del país y su patrimonio", nivel:2 },
         { materia:"Ciencias Sociales", area:"Ciencias Sociales", contenido:"Identifica los procesos productivos que satisfacen las necesidades básicas de la sociedad", indicador:"Identifica los procesos productivos basándose en las necesidades básicas", nivel:1 },
@@ -643,7 +604,24 @@
         { materia:"Ciencias Sociales", area:"Ciencias Sociales", contenido:"Construcción social de roles en diversos ámbitos para así construir una adecuada ciudadanía", indicador:"Identifica los procesos productivos basándose en las necesidades básicas", nivel:1 },
         { materia:"Ciencias Sociales", area:"Ciencias Sociales", contenido:"Comprende y contrasta las normas sociales para su rol en la vida cotidiana", indicador:"Reconoce la importancia de las instituciones, normas y leyes", nivel:1 },
         { materia:"Ciencias Sociales", area:"Ciencias Sociales", contenido:"Comprende y contrasta las normas sociales para su rol en la vida cotidiana", indicador:"Reconoce la importancia de las instituciones, normas y leyes", nivel:1 },
-        { materia:"Ciencias Sociales", area:"Ciencias Sociales", contenido:"Comprende y contrasta las normas sociales para su rol en la vida cotidiana", indicador:"Identifica el impacto ambiental de los procesos productivos", nivel:1 }
+        { materia:"Ciencias Sociales", area:"Ciencias Sociales", contenido:"Comprende y contrasta las normas sociales para su rol en la vida cotidiana", indicador:"Identifica el impacto ambiental de los procesos productivos", nivel:1 },
+
+        // ---- CIENCIAS NATURALES, EXPERIMENTALES Y TECNOLOGÍAS I ----
+        { materia:"Ciencias Naturales, Experimentales y Tecnología I", area:"CIENCIAS NATURALES", contenido:"Concepto de Ciencia", indicador:"Identifica el concepto general de ciencia como una forma sistemática de generar conocimiento", nivel:1 },
+        { materia:"Ciencias Naturales, Experimentales y Tecnología I", area:"CIENCIAS NATURALES", contenido:"Objetivos de estudio de la física, la Química y la Biología; elementos en común y sus diferencias", indicador:"Identifica el objeto de estudio de las principales ciencias naturales", nivel:1 },
+        { materia:"Ciencias Naturales, Experimentales y Tecnología I", area:"CIENCIAS NATURALES", contenido:"Conceptos de materia, cuerpo, masa y densidad", indicador:"Distingue los conceptos de materia, cuerpo, masa y densidad", nivel:2 },
+        { materia:"Ciencias Naturales, Experimentales y Tecnología I", area:"CIENCIAS NATURALES", contenido:"Clasificación de la materia", indicador:"Identifica ejemplos de sustancias puras y mezclas", nivel:1 },
+        { materia:"Ciencias Naturales, Experimentales y Tecnología I", area:"CIENCIAS NATURALES", contenido:"Modelos atómicos y carga eléctrica", indicador:"Identifica la ubicación y carga de las partículas subatómicas", nivel:2 },
+        { materia:"Ciencias Naturales, Experimentales y Tecnología I", area:"CIENCIAS NATURALES", contenido:"Formación de enlaces químicos (iones y moléculas)", indicador:"Aplica el concepto de formación de enlaces para identificar el tipo de enlace en un compuesto químico", nivel:3 },
+        { materia:"Ciencias Naturales, Experimentales y Tecnología I", area:"CIENCIAS NATURALES", contenido:"Concepto de energía", indicador:"Reconoce el concepto de energía como la capacidad para producir cambios o realizar trabajo", nivel:1 },
+        { materia:"Ciencias Naturales, Experimentales y Tecnología I", area:"CIENCIAS NATURALES", contenido:"El método científico y el conocimiento empírico y tradicional, como formas de comprensión de la naturaleza", indicador:"Distingue las características del método científico y del conocimiento empírico como formas de comprender la naturaleza", nivel:2 },
+        { materia:"Ciencias Naturales, Experimentales y Tecnología I", area:"CIENCIAS NATURALES", contenido:"Concepto de masa como cantidad de materia, unidad de medida y su diferencia con el concepto de peso", indicador:"Aplica la diferencia entre masa y peso en situaciones cotidianas", nivel:3 },
+        { materia:"Ciencias Naturales, Experimentales y Tecnología I", area:"CIENCIAS NATURALES", contenido:"Cálculo de volumen y densidad", indicador:"Aplica el concepto de densidad para explicar el comportamiento de los materiales en un fluido", nivel:3 },
+        { materia:"Ciencias Naturales, Experimentales y Tecnología I", area:"CIENCIAS NATURALES", contenido:"Propiedades físicas y químicas de la materia", indicador:"Diferencia propiedades físicas y químicas de la materia", nivel:2 },
+        { materia:"Ciencias Naturales, Experimentales y Tecnología I", area:"CIENCIAS NATURALES", contenido:"Teoría atómica: Dalton, Thomson, Rutherford, Bohr y Schrödinger", indicador:"Aplica los modelos atómicos para identificar el que explica los niveles de energía", nivel:3 },
+        { materia:"Ciencias Naturales, Experimentales y Tecnología I", area:"CIENCIAS NATURALES", contenido:"La Tabla periódica (simbología de los elementos)", indicador:"Identifica la simbología química de elementos comunes", nivel:1 },
+        { materia:"Ciencias Naturales, Experimentales y Tecnología I", area:"CIENCIAS NATURALES", contenido:"Estados de agregación de la materia y sus cambios (sólidos, líquidos, gases y plasma)", indicador:"Comprende la secuencia de cambios de estado por aumento de temperatura", nivel:2 },
+        { materia:"Ciencias Naturales, Experimentales y Tecnología I", area:"CIENCIAS NATURALES", contenido:"Medición: concepto de medición , magnitudes y unidad de medida, y su aplicación en las ciencias naturales", indicador:"Aplica la selección de unidades de medida adecuadas en situaciones científicas", nivel:3 }
     ];
 
     // ============================================================
@@ -657,11 +635,12 @@
         "Humanidades": "area-humanidades",
         "Lengua y Comunicación": "area-lengua",
         "Ciencias Sociales": "area-sociales",
-        "MATEMATICAS": "area-matematicas"
+        "MATEMATICAS": "area-matematicas",
+        "CIENCIAS NATURALES": "area-ciencias"
     };
 
     function getAreaCss(area) {
-        return AREA_CSS[area] || "area-ingles";
+        return AREA_CSS[area] || "area-ciencias";
     }
 
     function getAreaLabel(area) {
@@ -671,12 +650,12 @@
             "Humanidades":"Humanidades",
             "Lengua y Comunicación":"Lengua y Com.",
             "Ciencias Sociales":"Ciencias Sociales",
-            "MATEMATICAS":"Matemáticas"
+            "MATEMATICAS":"Matemáticas",
+            "CIENCIAS NATURALES":"Ciencias Naturales"
         };
         return map[area] || area;
     }
 
-    // Group by materia
     function groupByMateria(rows) {
         const map = {};
         for (const r of rows) {
@@ -894,7 +873,7 @@
     buildStats();
     renderCards();
 
-    // Prevenir clic derecho y atajos (según requerimiento)
+    // Prevenir clic derecho y atajos
     document.addEventListener('contextmenu', function(e) {
         e.preventDefault();
         return false;
@@ -910,7 +889,6 @@
         }
     });
 
-    // Detectar DevTools (simplificado)
     let devtoolsTriggered = false;
     setInterval(function() {
         if (devtoolsTriggered) return;
